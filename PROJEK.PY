@@ -2,6 +2,17 @@ import pandas as pd
 import os 
 import csv
 
+
+print("""
+___  ___          _     _____           _ 
+|  \/  |         (_)   |_   _|         (_)
+| .  . | ___  ___ _ _ __ | | __ _ _ __  _ 
+| |\/| |/ _ \/ __| | '_ \| |/ _` | '_ \| |
+| |  | |  __/\__ \ | | | | | (_| | | | | |
+\_|  |_/\___||___/_|_| |_\_/\__,_|_| |_|_|
+""")
+
+
 # Nama file untuk menyimpan data pengguna dan admin
 file_pengguna = "akun_pengguna.csv"
 file_admin = "admin.csv"
@@ -59,13 +70,16 @@ def login():
     print('LOGIN'.center(35))
     print('===================================\n')
     print('1. Login sebagai Admin')
-    print('2. Login sebagai Pengguna\n')
+    print('2. Login sebagai Pengguna')
+    print('3. kembali')
 
     pilihan = input('Pilih jenis login: ')
     if pilihan == '1':
         login_admin()
     elif pilihan == '2':
         login_pengguna()
+    elif pilihan == '3':
+        main()
     else:
         print('Pilihan tidak valid, coba lagi.\n')
 
@@ -89,7 +103,9 @@ def login_admin():
                 menu_admin(username)
                 return
 
-    print('Username atau password admin salah.\n')
+            else: 
+                print('Username atau password admin salah.\n')
+                return login_admin()
 
 # Login sebagai Pengguna
 def login_pengguna():
@@ -108,9 +124,12 @@ def login_pengguna():
         for row in baca:
             if row['username'] == username and row['password'] == password:
                 print(f'\nSelamat datang, {username}!')
-                return 
+                tampilan_pengguna(username)
+                return
             
-print('Username atau password pengguna salah.\n')
+            else:
+                print('Username atau password pengguna salah.\n')
+                return login_pengguna()
 
 
 
@@ -140,7 +159,7 @@ def menu_admin(username):
             rekap_transaksi()
         elif pilihan == '4':
             print(f'\nTerima kasih, Admin {username}. Anda berhasil logout.')
-            break
+            return main()
         else:
             print('Pilihan tidak valid, coba lagi.\n')
 
@@ -160,28 +179,63 @@ def manajemen_barang():
     elif man_barang == '3':
         menu_admin()
 
+#tambah barang
 def tambah_barang():
-    print('\n--- Tambah Barang ---')
+    print('===================================')
+    print('TAMBAH BARANG'.center(35))
+    print('===================================\n')
     nama = input('Nama barang: ')
-    harga = input('Harga barang: Rp.')
-    stok = input('Stok barang: ')
+    
+    while True:
+        try:
+            harga = float(input('Harga barang: Rp.'))
+            break 
+        except ValueError:
+            print('Input tidak valid. Harap masukkan angka untuk harga barang.')
+
+    while True:
+        try:
+            stok = int(input('Stok barang: '))
+            break 
+        except ValueError:
+            print('Input tidak valid. Harap masukkan angka untuk stok barang.')
 
     with open(file_barang, mode='a', newline='') as file:
         tambah_b = csv.writer(file)
         tambah_b.writerow([os.urandom(4).hex(), nama, harga, stok])
 
-    print(f'Barang {nama} berhasil ditambahkan.')
+    print(f'Barang {nama} berhasil ditambahkan.\n')
+    manajemen_barang()
 
+#lihat barang
 def lihat_barang():
-    print('\n--- Daftar Barang ---')
+    print('===================================')
+    print('LIHAT BARANG'.center(35))
+    print('===================================\n')
     if not os.path.exists(file_barang):
         print('Belum ada barang.')
         return
 
+    print(f"{'ID':<10} {'Nama':<20} {'Harga (Rp)':<15} {'Stok':<10}")
+    print('-' * 55)
+
     with open(file_barang, mode='r') as file:
         baca = csv.DictReader(file)
-        for row in barang:
-            print(f"ID: {row['id']}, Nama: {row['nama']}, Harga: Rp {row['harga']}, Stok: {row['stok']}")
+        for row in baca:
+            print(f"{row['id']:<10} {row['nama']:<20} {row['harga']:<15} {row['stok']:<10}")
+
+    print('\n') 
+
+    while True:
+        kembali = input("Apakah Anda ingin kembali? (iya/tidak): ")
+        if kembali == 'iya':
+            manajemen_barang()
+            break
+        elif kembali == 'tidak':
+            return lihat_barang()
+        else:
+            print("Pilihan tidak valid, silakan jawab 'iya' atau 'tidak'.")
+
 
 
 # Fitur manajemen voucher
@@ -199,17 +253,17 @@ def manajemen_voucher():
         if pilihan == '1':
             tambah_voucher()
         elif pilihan == '2':
-            lihat_voucher()
-        elif pilihan == '3':
             hapus_voucher()
-        elif pilihan == '4':
+        elif pilihan == '3':
             menu_admin()  
         else:
             print('Pilihan tidak valid, coba lagi.\n')
 
-
+#tambah voucher
 def tambah_voucher():
-    print('\n--- Tambah Voucher ---')
+    print('\n===================================')
+    print('TAMBAH VOUCHER'.center(35))
+    print('===================================\n')
     kode = input('Kode voucher: ')
     diskon = input('Diskon (%): ')
     limit_pemakaian = input('Batas pemakaian voucher: ')
@@ -219,19 +273,6 @@ def tambah_voucher():
         voucher.writerow([kode, diskon, limit_pemakaian])
 
     print(f'Voucher {kode} berhasil ditambahkan dengan batas pemakaian {limit_pemakaian}.')
-
-
-def lihat_voucher():
-    print('\n--- Daftar Voucher ---')
-    if not os.path.exists(file_voucher):
-        print('Belum ada voucher.')
-        return
-
-    with open(file_voucher, mode='r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            print(f"Kode: {row['kode']}, Diskon: {row['diskon']}%, Limit Pemakaian: {row['limit_pemakaian']}")
-
 
 def hapus_voucher():
     print('\n--- Hapus Voucher ---')
@@ -294,7 +335,7 @@ def gunakan_voucher(kode_voucher):
 
     return True
 
-
+#rekap transaksi
 def rekap_transaksi(username):
     while True:
         print('\n===================================')
@@ -346,6 +387,12 @@ def rekap_transaksi(username):
             break
         else:
             print("Pilihan tidak valid, coba lagi.\n")
+
+#tampilan pengguna
+def tampilan_pengguna(username):
+    print('\n===================================')
+    print((f"\nSelamat datang, {username}!\n").center(35))
+    print('===================================\n')
 
 
 if __name__ == "__main__":

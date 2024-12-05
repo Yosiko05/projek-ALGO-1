@@ -12,6 +12,7 @@ file_admin = "admin.csv"
 
 # Menu utama
 def main():
+    clear_terminal()
     while True:
         print("""
 ___  ___          _     _____           _ 
@@ -179,8 +180,7 @@ file_transaksi = "transaksi.csv"
 
 # Menu admin
 def menu_admin(username):
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
     while True:
         print('\n===================================')
         print('MENU ADMIN'.center(35))
@@ -224,7 +224,7 @@ def manajemen_barang():
         elif man_barang == '3':
             hapus_barang()
         elif man_barang == '4':
-            return
+            return clear_terminal()
         else:
             print("Pilihan tidak valid, coba lagi.\n")
 
@@ -327,6 +327,7 @@ def manajemen_voucher():
             print('Pilihan tidak valid, coba lagi.\n')
 
 def hapus_barang():
+    clear_terminal()
     print('===================================')
     print('HAPUS BARANG'.center(35))
     print('===================================\n')
@@ -441,6 +442,7 @@ def lihat_voucher():
 
 # Fungsi untuk menghapus voucher
 def hapus_voucher():
+    clear_terminal
     lihat_voucher()
     kode = input('Masukkan kode voucher yang ingin dihapus: ').strip()
 
@@ -508,8 +510,7 @@ def gunakan_voucher(kode_voucher):
     return True
 
 def rekap_transaksi():
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
     print('===================================')
     print('REKAP TRANSAKSI'.center(35))
     print('===================================\n')
@@ -528,10 +529,12 @@ def rekap_transaksi():
 
     print('\n')
     input("Tekan Enter untuk kembali")
+    clear_terminal()
 
-            
+#tampilan pengguna
 def tampilan_pengguna(username):
     keranjang = muat_keranjang(username)
+    clear_terminal()
     print('\n===================================')
     print((f"\nSelamat datang, {username}!\n").center(35))
     print('===================================\n')
@@ -554,7 +557,7 @@ def tampilan_pengguna(username):
             print('Pilihan tidak valid, coba lagi.\n')
 
 
-
+#belanja
 def belanja(keranjang, username):
     if os.name == 'nt':  
         os.system('cls')
@@ -608,7 +611,7 @@ def belanja(keranjang, username):
                         belanja(keranjang, username)  
                     else:
                         print('Baik terimakasih')
-                        return  
+                        return clear_terminal()
                 else:
                     print('Jumlah melebihi stok yang tersedia.\n')
             except ValueError:
@@ -799,4 +802,3 @@ def checkout(keranjang, total, username):
 
 if __name__ == "__main__":
     main()
-

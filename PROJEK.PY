@@ -10,6 +10,7 @@ def clear_terminal():
 file_pengguna = "akun_pengguna.csv"
 file_admin = "admin.csv"
 
+
 # Menu utama
 def main():
     clear_terminal()
@@ -36,7 +37,7 @@ ___  ___          _     _____           _
         elif pilihan == '2':
             login()
         elif pilihan == '3':
-            print('\nKeluar dari MesinTani, Terimakasih!')
+            keluar()
             break
         else:
             return main()
@@ -549,19 +550,22 @@ def tampilan_pengguna(username):
             belanja(keranjang, username)  
         elif pilihan == '2':
             cek_keranjang(keranjang, username) 
-            # Setelah cek keranjang, kembali ke tampilan pengguna
         elif pilihan == '3':
             print(f'\nTerima kasih telah berbelanja, {username}. Anda berhasil logout.')
+            input('---klik enter untuk konfirmaasi---')
+            main()
             simpan_keranjang(username, keranjang)  
             break 
         else:
             print('Pilihan tidak valid, coba lagi.\n')
-            
+
 #belanja
 def belanja(keranjang, username):
-    if os.name == 'nt':  
-        os.system('cls')
-    print('\n--- Daftar Barang ---')
+    clear_terminal()
+    print('===================================')
+    print('SELAMAT BERBELANJA'.center(35))
+    print('===================================\n')
+    print('--- Daftar Barang ---')
     if not os.path.exists(file_barang):
         print('Belum ada barang tersedia.\n')
         return
@@ -666,11 +670,11 @@ def simpan_keranjang(username, keranjang):
 
 # Fitur Cek Keranjang
 def cek_keranjang(keranjang, username):
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
     print('\n===================================')
     print(('CEK KERANJANGMU').center(35))
     print('===================================\n')
+    print('--- Daftar Keranjang Kamu ---')
     if not keranjang:
         print('Keranjang Anda kosong.\n')
         return
@@ -801,6 +805,16 @@ def checkout(keranjang, total, username):
         writer.writerows(data_keranjang)
     keranjang.clear()
 
+
+
+
+def keluar():
+    clear_terminal()
+    print(''' _____________  ______  ______   __ _____   __________ __    _______   __  ______  ___   ____     ____  ____  ______  ___   ______
+/_  __/ __/ _ \/  _/  |/  / _ | / //_/ _ | / __/  _/ // /   / __/ _ | /  |/  / _ \/ _ | /  _/ __ / / / / /  |/  / _ \/ _ | / / / /
+ / / / _// , _// // /|_/ / __ |/ ,< / __ |_\ \_/ // _  /   _\ \/ __ |/ /|_/ / ___/ __ |_/ /  / // / /_/ / /|_/ / ___/ __ |/_/_/_/ 
+/_/ /___/_/|_/___/_/  /_/_/ |_/_/|_/_/ |_/___/___/_//_( ) /___/_/ |_/_/  /_/_/  /_/ |_/___/  \___/\____/_/  /_/_/  /_/ |_(_|_|_)  
+                                                      |/                                                             ''')
 
 if __name__ == "__main__":
     main()

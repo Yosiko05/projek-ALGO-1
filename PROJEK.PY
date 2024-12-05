@@ -536,7 +536,7 @@ def tampilan_pengguna(username):
     keranjang = muat_keranjang(username)
     clear_terminal()
     print('\n===================================')
-    print((f"\nSelamat datang, {username}!\n").center(35))
+    print((f"Selamat datang, {username}!").center(35))
     print('===================================\n')
 
     while True:

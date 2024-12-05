@@ -533,13 +533,13 @@ def rekap_transaksi():
 
 #tampilan pengguna
 def tampilan_pengguna(username):
-    keranjang = muat_keranjang(username)
     clear_terminal()
-    print('\n===================================')
-    print((f"Selamat datang, {username}!").center(35))
-    print('===================================\n')
-
+    keranjang = muat_keranjang(username)
     while True:
+        print('\n===================================')
+        print((f"Selamat datang, {username}!").center(35))
+        print('===================================\n')
+
         print('1. Belanja')
         print('2. Cek Keranjang')
         print('3. Logout\n')
@@ -549,14 +549,14 @@ def tampilan_pengguna(username):
             belanja(keranjang, username)  
         elif pilihan == '2':
             cek_keranjang(keranjang, username) 
+            # Setelah cek keranjang, kembali ke tampilan pengguna
         elif pilihan == '3':
             print(f'\nTerima kasih telah berbelanja, {username}. Anda berhasil logout.')
             simpan_keranjang(username, keranjang)  
             break 
         else:
             print('Pilihan tidak valid, coba lagi.\n')
-
-
+            
 #belanja
 def belanja(keranjang, username):
     if os.name == 'nt':  
@@ -668,7 +668,9 @@ def simpan_keranjang(username, keranjang):
 def cek_keranjang(keranjang, username):
     if os.name == 'nt':  
         os.system('cls')
-    print('\n--- Keranjang Belanja ---')
+    print('\n===================================')
+    print(('CEK KERANJANGMU').center(35))
+    print('===================================\n')
     if not keranjang:
         print('Keranjang Anda kosong.\n')
         return
@@ -691,7 +693,7 @@ def cek_keranjang(keranjang, username):
     if pilihan == '1':
         checkout(keranjang, total, username) 
     elif pilihan == '2':
-        return
+        return clear_terminal()
     else:
         print('Pilihan tidak valid, coba lagi.\n')
 

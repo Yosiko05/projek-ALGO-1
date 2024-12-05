@@ -135,11 +135,6 @@ def login_admin():
 
             print('Password salah! Silakan coba lagi.')
 
-                    
-                    
-
-                
-
 # Login sebagai Pengguna
 def login_pengguna():
     clear_terminal()
@@ -172,8 +167,6 @@ def login_pengguna():
                         return 
 
             print('Password salah! Silakan coba lagi.')
-
-
 
 file_barang = "barang.csv"
 file_voucher = "voucher.csv"
@@ -288,13 +281,13 @@ def lihat_barang():
         print('Belum ada barang.')
         return
 
-    print(f"{'ID':<10} {'Nama':<20} {'Harga (Rp)':<15} {'Stok':<10}")
-    print('-' * 55)
+    print(f"{'ID':<10} {'Nama':<30} {'Harga (Rp)':<25} {'Stok':<10}")
+    print('-' * 110)
 
     with open(file_barang, mode='r') as file:
         baca = csv.DictReader(file)
         for row in baca:
-            print(f"{row['id']:<10} {row['nama']:<20} {row['harga']:<15} {row['stok']:<10}")
+            print(f"{row['id']:<10} {row['nama']:<30} {row['harga']:<25} {row['stok']:<10}")
 
     print('\n') 
 
@@ -415,6 +408,8 @@ def tambah_voucher():
         writer.writerow([kode, diskon, limit_pemakaian])
 
     print(f'Voucher {kode} berhasil ditambahkan dengan diskon {diskon}% dan batas {limit_pemakaian}.\n')
+    input('Klik Enter untuk Lanjut')
+    manajemen_voucher()
 
 # Fungsi untuk melihat voucher
 def lihat_voucher():
@@ -426,7 +421,8 @@ def lihat_voucher():
 
     if not os.path.exists(file_voucher):
         print('Tidak ada voucher yang tersedia.\n')
-        return
+        input('Masukkan voucher terlebih dahulu')
+        return clear_terminal()
 
     with open(file_voucher, mode='r') as file:
         reader = csv.DictReader(file)
@@ -440,6 +436,8 @@ def lihat_voucher():
         for row in rows:
             print(f"{row['kode']:<15} {row['diskon']:<15} {row['limit_pemakaian']:<20}")
         print('\n')
+        input('Klik Enter untuk Lanjut')
+        return clear_terminal()
 
 # Fungsi untuk menghapus voucher
 def hapus_voucher():
@@ -552,7 +550,7 @@ def tampilan_pengguna(username):
             cek_keranjang(keranjang, username) 
         elif pilihan == '3':
             print(f'\nTerima kasih telah berbelanja, {username}. Anda berhasil logout.')
-            input('---klik enter untuk konfirmaasi---')
+            input('---klik enter untuk konfirmasi---')
             main()
             simpan_keranjang(username, keranjang)  
             break 
@@ -574,13 +572,13 @@ def belanja(keranjang, username):
     with open(file_barang, mode='r') as file:
         reader = csv.DictReader(file)
         
-        print(f"{'ID':<10} {'Nama Barang':<20} {'Harga (Rp)':<15} {'Stok':<10}")
+        print(f"{'ID':<10} {'Nama Barang':<30} {'Harga (Rp)':<15} {'Stok':<10}")
         print('-' * 60)
         
         for row in reader:
             barang_tersedia.append(row)
             # Menampilkan setiap baris barang
-            print(f"{row['id']:<10} {row['nama']:<20} {row['harga']:<15} {row['stok']:<10}")
+            print(f"{row['id']:<10} {row['nama']:<30} {row['harga']:<15} {row['stok']:<10}")
     
     if not barang_tersedia:
         print('Tidak ada barang tersedia saat ini.\n')
@@ -680,14 +678,14 @@ def cek_keranjang(keranjang, username):
         return
 
     total = 0
-    print(f"{'ID':<10} {'Nama':<20} {'Jumlah':<10} {'Harga Satuan (Rp)':<20} {'Subtotal (Rp)':<15}")
-    print('-' * 70)
+    print(f"{'ID':<10} {'Nama':<30} {'Jumlah':<20} {'Harga Satuan (Rp)':<25} {'Subtotal (Rp)':<15}")
+    print('-' * 100)
     for item in keranjang:
         subtotal = int(item['harga']) * item['jumlah']
         total += subtotal
-        print(f"{item['id']:<10} {item['nama']:<20} {item['jumlah']:<10} {item['harga']:<20} {subtotal:<15}")
+        print(f"{item['id']:<10} {item['nama']:<30} {item['jumlah']:<20} {item['harga']:<25} {subtotal:<15}")
 
-    print('-' * 70)
+    print('-' * 100)
     print(f"Total Belanja: Rp {total}\n")
 
     print('1. Checkout')

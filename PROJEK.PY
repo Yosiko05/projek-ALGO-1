@@ -41,8 +41,7 @@ ___  ___          _     _____           _
             return main()
 
 def daftar():
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
     print('===================================')
     print('DAFTAR AKUN BARU'.center(35))
     print('===================================\n')
@@ -83,8 +82,7 @@ def daftar():
     print('Akun berhasil didaftarkan! Silakan login.\n')
 # Login
 def login():
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
     print('===================================')
     print('LOGIN'.center(35))
     print('===================================\n')
@@ -105,8 +103,7 @@ def login():
 
 # Login sebagai Admin
 def login_admin():
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
 
     print('===================================')
     print('LOGIN ADMIN' .center(35))
@@ -178,8 +175,7 @@ file_transaksi = "transaksi.csv"
 
 # Menu admin
 def menu_admin(username):
-    if os.name == 'nt':  
-        os.system('cls')
+    clear_terminal()
     while True:
         print('\n===================================')
         print('MENU ADMIN'.center(35))
@@ -205,6 +201,7 @@ def menu_admin(username):
 
 # Fitur manajemen barang
 def manajemen_barang():
+    clear_terminal()
     print('===================================')
     print('MANAJEMEN BARANG'.center(35))
     print('===================================\n')
@@ -221,6 +218,7 @@ def manajemen_barang():
 
 #tambah barang
 def tambah_barang():
+    clear_terminal()
     print('===================================')
     print('TAMBAH BARANG'.center(35))
     print('===================================\n')
@@ -240,12 +238,32 @@ def tambah_barang():
         except ValueError:
             print('Input tidak valid. Harap masukkan angka untuk stok barang.')
 
+    # Cek apakah file barang.csv sudah ada
+    file_exists = os.path.exists(file_barang)
+
+    # Tentukan id berdasarkan data terakhir
+    if file_exists:
+        with open(file_barang, mode='r') as file:
+            reader = csv.DictReader(file)
+            id = 0
+            for row in reader:
+                id = int(row['id'])  # Ambil id terakhir
+            id_barang = id + 1  # id berikutnya
+    else:
+        id_barang = 1  # Jika file belum ada, mulai dari 1
+
     with open(file_barang, mode='a', newline='') as file:
         tambah_b = csv.writer(file)
-        tambah_b.writerow([os.urandom(4).hex(), nama, harga, stok])
+        if not file_exists:
+            tambah_b.writerow(['id', 'nama', 'harga', 'stok'])  
+        tambah_b.writerow([id_barang, nama, harga, stok])  
 
     print(f'Barang {nama} berhasil ditambahkan.\n')
-    manajemen_barang()
+    pilih=input('Apakah anda ingin memasukkan barang lain? (y/n) ')
+    if pilih == 'y':
+        tambah_barang()
+    elif pilih == 'n':
+        manajemen_barang()
 
 #lihat barang
 def lihat_barang():

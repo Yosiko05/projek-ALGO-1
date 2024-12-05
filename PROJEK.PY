@@ -630,7 +630,7 @@ def checkout(keranjang, total):
 
     while True:
         try:
-            nominal = int(inpugt(f"Masukkan nominal pembayaran (harus Rp {total}): \n"))
+            nominal = int(input(f"Masukkan nominal pembayaran (harus Rp {total}): \n"))
             if nominal < total:
                 print(f"\nNominal kurang. Anda masih membutuhkan Rp {total - nominal} lagi.\n")
             elif nominal > total:

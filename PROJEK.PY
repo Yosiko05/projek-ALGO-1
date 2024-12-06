@@ -111,7 +111,7 @@ def login_admin():
         os.system('cls')
 
     print('===================================')
-    print('LOGIN ADMIN'.center(35))
+    print('LOGIN ADMIN' .center(35))
     print('===================================\n')
     while True:
         username = input('Masukkan username: ')
@@ -563,26 +563,24 @@ def hapus_voucher():
         print("Anda tidak menggunakan voucher.")
 
 def rekap_transaksi():
-    clear_terminal()
-    print('===================================')
-    print('REKAP TRANSAKSI'.center(35))
-    print('===================================\n')
+    if os.name == 'nt':  
+        os.system('cls')
+    print('\n--- Rekap Transaksi ---\n')
 
     if not os.path.exists(file_transaksi):
         print('Belum ada transaksi.')
         return
 
-    print(f"{'ID Transaksi':<15} {'Username':<15} {'Tanggal':<20} {'Barang':<20} {'Jumlah':<10} {'Total':<10}")
-    print('-' * 80)
+    print(f"{'ID Transaksi':<15} {'Username':<15} {'Tanggal':<20} {'Barang':<50} {'Total Pembayaran':<15}")
+    print('-' * 100)
 
     with open(file_transaksi, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            print(f"{row['transaksi_id']:<15} {row['username']:<15} {row['tanggal']:<20} {row['nama_barang']:<20} {row['jumlah']:<10} {row['total_harga']:<10}")
+            print(f"{row['transaksi_id']:<15} {row['username']:<15} {row['tanggal']:<20} {row['barang']:<50} Rp {row['total_pembayaran']:<15}")
 
     print('\n')
-    input("Tekan Enter untuk kembali")
-    clear_terminal()
+    input("Tekan Enter untuk kembali ke menu utama...")
 
 #tampilan pengguna
 def tampilan_pengguna(username):
@@ -609,6 +607,7 @@ def tampilan_pengguna(username):
             simpan_keranjang(username, keranjang)  
             break 
         else:
+            clear_terminal()
             print('Pilihan tidak valid, coba lagi.\n')
 
 #belanja
@@ -628,8 +627,10 @@ def belanja(keranjang, username):
         print('-' * 60)
         
         for row in reader:
-            barang_tersedia.append(row)
-            print(f"{row['id']:<10} {row['nama']:<30} {row['harga']:<15} {row['stok']:<10}")
+            # Hanya tambahkan barang dengan stok > 0
+            if int(row['stok']) > 0:
+                barang_tersedia.append(row)
+                print(f"{row['id']:<10} {row['nama']:<30} {row['harga']:<15} {row['stok']:<10}")
     
     if not barang_tersedia:
         print('Tidak ada barang tersedia saat ini.\n')
@@ -637,14 +638,15 @@ def belanja(keranjang, username):
 
     # Pilih barang untuk dimasukkan ke keranjang
     id_barang = input('\nMasukkan ID barang yang ingin dibeli (ketik enter untuk kembali): ')
-    if id_barang == '0':
+    if not id_barang:
         return clear_terminal()
 
     for barang in barang_tersedia:
         if barang['id'] == id_barang:
+            stok_tersedia = int(barang['stok'])
             try:
                 jumlah = int(input(f"Masukkan jumlah {barang['nama']} yang ingin dibeli: "))
-                if jumlah <= int(barang['stok']):
+                if jumlah <= stok_tersedia:
                     # Cek apakah barang sudah ada di keranjang
                     barang_ditemukan = False
                     for item in keranjang:
@@ -654,27 +656,38 @@ def belanja(keranjang, username):
                             break
 
                     if not barang_ditemukan:
-                        keranjang.append({'id': barang['id'], 'nama': barang['nama'], 'harga': barang['harga'], 'jumlah': jumlah})
+                        keranjang.append({
+                            'id': barang['id'], 
+                            'nama': barang['nama'], 
+                            'harga': barang['harga'], 
+                            'jumlah': jumlah
+                        })
+                    
+                    # Kurangi stok barang dalam file
+                    barang['stok'] = str(stok_tersedia - jumlah)
+                    
+                    with open(file_barang, mode='w', newline='') as file:
+                        writer = csv.DictWriter(file, fieldnames=['id', 'nama', 'harga', 'stok'])
+                        writer.writeheader()
+                        writer.writerows(barang_tersedia)
                     
                     print(f"{barang['nama']} sebanyak {jumlah} berhasil ditambahkan ke keranjang.\n")
                     simpan_keranjang(username, keranjang)
                     
                     lanjut_belanja = input('Apakah Anda ingin membeli barang lain? (y/n): ')
                     if lanjut_belanja.lower() == 'y':
-                        clear_terminal()
-                        belanja(keranjang, username)  
+                        return belanja(keranjang, username)
                     else:
-                        print('Baik terimakasih')
+                        print('Baik terima kasih!')
                         return clear_terminal()
                 else:
                     print('Jumlah melebihi stok yang tersedia.\n')
             except ValueError:
                 print('Input jumlah tidak valid.\n')
-            return
+            return 
 
     print('ID barang tidak ditemukan. Coba lagi.\n')
-    clear_terminal()
-
+    return belanja(keranjang, username)
 
 def muat_keranjang(username):
     keranjang = []
@@ -690,7 +703,6 @@ def muat_keranjang(username):
                         'jumlah': int(row['jumlah'])
                     })
     return keranjang
-
 
 def simpan_keranjang(username, keranjang):
     data_keranjang = []

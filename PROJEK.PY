@@ -53,37 +53,49 @@ def daftar():
         with open(file_pengguna, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['username', 'password'])
-
     while True:
-        username = input('Masukkan username: ')
-        
-        
-        # Cek apakah username sudah terdaftar
-        with open(file_pengguna, mode='r', newline='') as file:
-            baca = csv.DictReader(file)
-            for row in baca:
-                if row['username'] == username:
-                    print('Username sudah terdaftar. Gunakan username lain.')
+        username = input('Masukkan username: ').strip()
+
+        while True:
+            if not username:
+                df=input('Username tidak boleh kosong! coba lagi? (y/n)')
+                if df == 'y':
+                    daftar()
+                elif df == 'n':
+                    main()
+                else:
+                    print('input tidak valid')
+                    continue
+            
+            
+            # Cek apakah username sudah terdaftar
+            with open(file_pengguna, mode='r', newline='') as file:
+                baca = csv.DictReader(file)
+                for row in baca:
+                    if row['username'] == username:
+                        print('Username sudah terdaftar. Gunakan username lain.')
+                        break
+                else:
                     break
+
+        while True:
+            password = input('Masukkan password: ').strip()
+            if not password: 
+                input('Password tidak boleh kosong. klik enter untuk mengulangi')
+                daftar()
+            konfirmasi = input('Konfirmasi password: ')
+
+            if password != konfirmasi:
+                print('Password dan konfirmasi password tidak cocok. Coba lagi!!')
             else:
-                break
+                break 
 
-    while True:
-        password = input('Masukkan password: ')
-        konfirmasi = input('Konfirmasi password: ')
+        with open(file_pengguna, mode='a', newline='') as file:
+            a = csv.writer(file)
+            a.writerow([username, password])
 
-        if password != konfirmasi:
-            print('Password dan konfirmasi password tidak cocok. Coba lagi!!')
-        else:
-            break 
-
-    with open(file_pengguna, mode='a', newline='') as file:
-        a = csv.writer(file)
-        a.writerow([username, password])
-
-
-    clear_terminal()
-    print('Akun berhasil didaftarkan! Silakan login.\n')
+        input('--Akun berhasil didaftarkan! Silakan login.--\n')
+        main()
 # Login
 def login():
     if os.name == 'nt':  
@@ -114,6 +126,11 @@ def login_admin():
     print('===================================')
     print('LOGIN ADMIN' .center(35))
     print('===================================\n')
+
+    if not os.path.exists(file_admin):
+        with open(file_admin, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['username', 'password']) 
     while True:
         username = input('Masukkan username: ')
 
@@ -121,8 +138,17 @@ def login_admin():
         with open(file_admin, mode='r', newline='') as file:
             baca = csv.DictReader(file)
             if not any(row['username'] == username for row in baca):
-                print('Username tidak ditemukan! Silakan masukkan username yang benar.')
-                continue  # Kembali ke awal loop untuk meminta username lagi
+                while True:
+                    j=input('Username tidak ditemukan! apakah mau mecoba kembali? (y/n): ')
+                    if j == 'y':
+                        login_admin()
+                        return
+                    elif j == 'n':
+                        login()
+                        return
+                    else:
+                        print("pilihan tidak valid")
+                        continue
 
         while True: 
             password = input('Masukkan password: ')
@@ -132,9 +158,10 @@ def login_admin():
                 for row in baca:
                     if row['username'] == username and row['password'] == password:
                         menu_admin(username)
-                        return
+                        return 
 
-            print('Password salah! Silakan coba lagi.')
+            input('Password salah! Silakan coba lagi.')
+            login_admin()
 
 # Login sebagai Pengguna
 def login_pengguna():
@@ -153,8 +180,15 @@ def login_pengguna():
         with open(file_pengguna, mode='r', newline='') as file:
             baca = csv.DictReader(file)
             if not any(row['username'] == username for row in baca):
-                print('Username tidak ditemukan! Silakan masukkan username yang benar.')
-                continue 
+                while True:
+                    a=input('Username salah, coba lagi?(y/n): ')
+                    if a == 'y':
+                        login_pengguna()
+                    elif a == 'n':
+                        login()
+                    else:
+                        print('pilihan tidak valid')
+                        continue
 
         while True:
             password = input('Masukkan password: ')
@@ -167,7 +201,8 @@ def login_pengguna():
                         tampilan_pengguna(username)
                         return 
 
-            print('Password salah! Silakan coba lagi.')
+            input('Password salah! Silakan coba lagi.')
+            login_pengguna()
 
 file_barang = "barang.csv"
 file_voucher = "voucher.csv"
@@ -563,6 +598,7 @@ def hapus_voucher():
     else:
         print("Anda tidak menggunakan voucher.")
 
+#rekap
 def rekap_transaksi():
     if os.name == 'nt':  
         os.system('cls')
@@ -572,13 +608,13 @@ def rekap_transaksi():
         print('Belum ada transaksi.')
         return
 
-    print(f"{'ID Transaksi':<15} {'Username':<15} {'Tanggal':<20} {'Barang':<50} {'Total Pembayaran':<15}")
+    print(f"{'ID Transaksi':<15} {'Username':<15} {'Tanggal':<20} {'Barang':<55} {'Total Pembayaran':<15}")
     print('-' * 100)
 
     with open(file_transaksi, mode='r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            print(f"{row['transaksi_id']:<15} {row['username']:<15} {row['tanggal']:<20} {row['barang']:<50} Rp {row['total_pembayaran']:<15}")
+            print(f"{row['transaksi_id']:<15} {row['username']:<15} {row['tanggal']:<20} {row['barang']:<55} Rp {row['total_pembayaran']:<15}")
 
     print('\n')
     input("Tekan Enter untuk kembali ke menu utama...")

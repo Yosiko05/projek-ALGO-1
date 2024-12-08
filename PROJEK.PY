@@ -156,6 +156,7 @@ def login_admin():
                     else:
                         print("pilihan tidak valid")
                         continue
+                    break
 
         while True: 
             password = input('Masukkan password: ')
@@ -196,6 +197,7 @@ def login_pengguna():
                     else:
                         print('pilihan tidak valid')
                         continue
+                    break
 
         while True:
             password = input('Masukkan password: ')

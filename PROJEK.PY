@@ -424,10 +424,17 @@ def tambah_voucher():
     print('TAMBAH VOUCHER'.center(35))
     print('===================================\n')
 
-    kode = input('Masukkan kode voucher: ').strip()
-    if not kode:
-        print('Kode voucher tidak boleh kosong.\n')
-        return
+    while True:
+        kode = input('Masukkan kode voucher: ').strip()
+        if not kode:
+            i = input('Kode tidak boleh kosong, apakah tetap ingin memasukan kode (y/n)\n')
+            if i == "y":
+                tambah_voucher()
+            elif i == "n":
+                manajemen_voucher()
+            else:
+                print("Kode tidak valid coba lagi")
+                continue
 
     while True:
         try:

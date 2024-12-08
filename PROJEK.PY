@@ -618,6 +618,7 @@ def rekap_transaksi():
 
     print('\n')
     input("Tekan Enter untuk kembali ke menu utama...")
+    clear_terminal()
 
 #tampilan pengguna
 def tampilan_pengguna(username):
@@ -651,7 +652,9 @@ def tampilan_pengguna(username):
 def belanja(keranjang, username):
     if os.name == 'nt':  
         os.system('cls')
-    print('\n--- Daftar Barang ---')
+    print('===================================')
+    print('BELANJA YUK'.center(35))
+    print('===================================\n')
     if not os.path.exists(file_barang):
         print('Belum ada barang tersedia.\n')
         return
@@ -837,7 +840,9 @@ from datetime import datetime
 def checkout(keranjang, total, username):
     if os.name == 'nt':  
         os.system('cls')
-    print('\n--- Checkout ---\n')
+    print('\n===================================')
+    print(('CHECKOUT').center(35))
+    print('===================================\n')
     print(f"Total yang harus dibayar: Rp {total}\n")
 
     # Proses voucher

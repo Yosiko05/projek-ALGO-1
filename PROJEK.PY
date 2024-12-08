@@ -41,6 +41,7 @@ ___  ___          _     _____           _
             break
         else:
             main()
+        break
 
 def daftar():
     if os.name == 'nt':  
@@ -61,20 +62,24 @@ def daftar():
                 df=input('Username tidak boleh kosong! coba lagi? (y/n)')
                 if df == 'y':
                     daftar()
+                    return
                 elif df == 'n':
                     main()
+                    return
                 else:
                     print('input tidak valid')
                     continue
+            clear_terminal()    
+            break
             
             
             # Cek apakah username sudah terdaftar
-            with open(file_pengguna, mode='r', newline='') as file:
-                baca = csv.DictReader(file)
-                for row in baca:
-                    if row['username'] == username:
-                        print('Username sudah terdaftar. Gunakan username lain.')
-                        break
+        with open(file_pengguna, mode='r', newline='') as file:
+            baca = csv.DictReader(file)
+            for row in baca:
+                if row['username'] == username:
+                    print('Username sudah terdaftar. Gunakan username lain.')
+                    break
                 else:
                     break
 
@@ -116,6 +121,8 @@ def login():
         main()
     else:
         login()
+    
+    
         
 
 # Login sebagai Admin
@@ -257,6 +264,7 @@ def manajemen_barang():
             return clear_terminal()
         else:
             print("Pilihan tidak valid, coba lagi.\n")
+        break
 
 
 # Fungsi Tambah Barang
@@ -405,49 +413,8 @@ def manajemen_voucher():
             return 
         else:
             print('Pilihan tidak valid, coba lagi.\n')
+        break
 
-def hapus_barang():
-    clear_terminal()
-    print('===================================')
-    print('HAPUS BARANG'.center(35))
-    print('===================================\n')
-
-    if not os.path.exists(file_barang):
-        print('Belum ada barang untuk dihapus.')
-        input("Tekan Enter untuk kembali ke menu manajemen...")
-        manajemen_barang()
-        return
-
-    # Tampilkan daftar barang
-    print(f"{'ID':<10} {'Nama':<20} {'Harga (Rp)':<15} {'Stok':<10}")
-    print('-' * 55)
-
-    barang_tersedia = []
-    with open(file_barang, mode='r') as file:
-        baca = csv.DictReader(file)
-        for row in baca:
-            barang_tersedia.append(row)
-            print(f"{row['id']:<10} {row['nama']:<20} {row['harga']:<15} {row['stok']:<10}")
-
-    print('\n')
-
-    # Input ID barang untuk dihapus
-    id_hapus = input("Masukkan ID barang yang ingin dihapus: ")
-
-    # Filter barang untuk dihapus
-    barang_baru = [barang for barang in barang_tersedia if barang['id'] != id_hapus]
-
-    if len(barang_tersedia) == len(barang_baru):
-        print(f"Barang dengan ID {id_hapus} tidak ditemukan.")
-    else:
-        with open(file_barang, mode='w', newline='') as file:
-            tulis = csv.DictWriter(file, fieldnames=['id', 'nama', 'harga', 'stok'])
-            tulis.writeheader()
-            tulis.writerows(barang_baru)
-        print(f"Barang dengan ID {id_hapus} berhasil dihapus.")
-
-    input("Tekan Enter untuk kembali ke menu manajemen...")
-    manajemen_barang()
 
 # Fungsi untuk menambah voucher
 def tambah_voucher():
@@ -960,6 +927,7 @@ def keluar():
  / / / _// , _// // /|_/ / __ |/ ,< / __ |_\ \_/ // _  /   _\ \/ __ |/ /|_/ / ___/ __ |_/ /  / // / /_/ / /|_/ / ___/ __ |/_/_/_/ 
 /_/ /___/_/|_/___/_/  /_/_/ |_/_/|_/_/ |_/___/___/_//_( ) /___/_/ |_/_/  /_/_/  /_/ |_/___/  \___/\____/_/  /_/_/  /_/ |_(_|_|_)  
                                                       |/                                                             ''')
+
 
 if __name__ == "__main__":
     main()

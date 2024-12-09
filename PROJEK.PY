@@ -507,7 +507,7 @@ def hapus_voucher():
         rows = list(reader)
         if not rows:
             print('Tidak ada voucher yang tersedia.\n')
-            return
+            return manajemen_voucher()
         
         print(f"{'Kode':<15} {'Diskon (%)':<15} {'Batas Pemakaian':<20}")
         print('-' * 50)

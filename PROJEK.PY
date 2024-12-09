@@ -345,7 +345,7 @@ def lihat_barang():
     print('\n') 
 
     input("Tekan Enter untuk kembali ke menu manajemen...")
-    clear_terminal()
+    manajemen_barang()
 
 def hapus_barang():
     if os.name == 'nt':  
@@ -389,7 +389,8 @@ def hapus_barang():
         print(f"Barang dengan ID {id_hapus} berhasil dihapus.")
 
     input("Tekan Enter untuk kembali ke menu manajemen...")
-    clear_terminal()
+    manajemen_barang()
+
 # Fungsi manajemen voucher
 def manajemen_voucher():
     if os.name == 'nt':  

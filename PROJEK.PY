@@ -426,12 +426,12 @@ def tambah_voucher():
     print('TAMBAH VOUCHER'.center(35))
     print('===================================\n')
 
-    while True:
-        kode = input('Masukkan kode voucher: ').strip()
-        if not kode:
-            input('Kode voucher tidak boleh kosong.\n')
-            clear_terminal()
-            return tambah_voucher()
+
+    kode = input('Masukkan kode voucher: ').strip()
+    if not kode:
+        input('Kode voucher tidak boleh kosong.\n')
+        clear_terminal()
+        return tambah_voucher()
 
     while True:
         try:

@@ -320,7 +320,7 @@ def tambah_barang():
 
     print(f'\nBarang {nama} berhasil ditambahkan.\n')
     input('Tekan Enter untuk kembali ke menu manajemen...')
-    clear_terminal()
+    manajemen_barang()
     
 # Fungsi Lihat Barang
 def lihat_barang():
@@ -429,14 +429,9 @@ def tambah_voucher():
     while True:
         kode = input('Masukkan kode voucher: ').strip()
         if not kode:
-            i = input('Kode tidak boleh kosong, apakah tetap ingin memasukan kode (y/n)\n')
-            if i == "y":
-                tambah_voucher()
-            elif i == "n":
-                manajemen_voucher()
-            else:
-                print("Kode tidak valid coba lagi")
-                continue
+            input('Kode voucher tidak boleh kosong.\n')
+            clear_terminal()
+            return tambah_voucher()
 
     while True:
         try:

@@ -465,7 +465,7 @@ def tambah_voucher():
         writer.writerow([kode, diskon, limit_pemakaian])
 
     print(f'Voucher {kode} berhasil ditambahkan dengan diskon {diskon}% dan batas {limit_pemakaian}.\n')
-    input('Klik Enter untuk Lanjut')
+    input('Klik Enter untuk kembali.')
     manajemen_voucher()
 
 # Fungsi untuk melihat voucher
@@ -493,7 +493,7 @@ def lihat_voucher():
         for row in rows:
             print(f"{row['kode']:<15} {row['diskon']:<15} {row['limit_pemakaian']:<20}")
         print('\n')
-        input('Klik Enter untuk Lanjut')
+        input('Klik Enter untuk kembali.')
         return clear_terminal()
 
 # Fungsi untuk menghapus voucher
@@ -543,8 +543,8 @@ def hapus_voucher():
         writer.writeheader()
         writer.writerows(updated_rows)
 
-    print(f'Voucher {kode} berhasil dihapus.\n')
-    clear_terminal()
+    input(f'Voucher {kode} berhasil dihapus.\n')
+    manajemen_voucher()
 
 #rekap
 def rekap_transaksi():
@@ -565,7 +565,7 @@ def rekap_transaksi():
             print(f"{row['transaksi_id']:<15} {row['username']:<15} {row['tanggal']:<20} {row['barang']:<55} Rp {row['total_pembayaran']:<15}")
 
     print('\n')
-    input("Tekan Enter untuk kembali ke menu utama...")
+    input("Tekan Enter untuk kembali.")
     clear_terminal()
 
 #tampilan pengguna

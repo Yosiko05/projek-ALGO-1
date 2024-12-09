@@ -241,7 +241,8 @@ def menu_admin(username):
             print(f'\nTerima kasih, Admin {username}. Anda berhasil logout.')
             return main()
         else:
-            print('Pilihan tidak valid, coba lagi.\n')
+            input('Pilihan tidak valid, coba lagi.\n')
+            clear_terminal()
 
 # Fitur manajemen barang
 def manajemen_barang():
@@ -494,7 +495,7 @@ def lihat_voucher():
             print(f"{row['kode']:<15} {row['diskon']:<15} {row['limit_pemakaian']:<20}")
         print('\n')
         input('Klik Enter untuk kembali.')
-        return clear_terminal()
+        manajemen_voucher()
 
 # Fungsi untuk menghapus voucher
 def hapus_voucher():

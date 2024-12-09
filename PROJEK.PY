@@ -536,7 +536,7 @@ def hapus_voucher():
     if not voucher_ditemukan:
         print(f"Voucher tidak ditemukan.\n")
         input('Klik enter untuk kembali')
-        return clear_terminal()
+        return manajemen_voucher()
 
     with open(file_voucher, mode='w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=['kode', 'diskon', 'limit_pemakaian'])

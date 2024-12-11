@@ -614,7 +614,6 @@ def belanja(keranjang, username):
         print('-' * 60)
         
         for row in reader:
-            # Hanya tambahkan barang dengan stok > 0
             if int(row['stok']) > 0:
                 barang_tersedia.append(row)
                 print(f"{row['id']:<10} {row['nama']:<30} {row['harga']:<15} {row['stok']:<10}")
@@ -632,7 +631,7 @@ def belanja(keranjang, username):
         if barang['id'] == id_barang:
             stok_tersedia = int(barang['stok'])
             
-            while True:  # Loop untuk memastikan jumlah barang valid
+            while True: 
                 if os.name == 'nt':
                     os.system('cls') 
 
@@ -648,32 +647,31 @@ def belanja(keranjang, username):
                 try:
                     jumlah = input(f"Masukkan jumlah {barang['nama']} yang ingin dibeli: ").strip()
                     
-                    if not jumlah:  # Jika input kosong, ulangi
+                    if not jumlah:  
                         print("Jumlah tidak boleh kosong. Silakan coba lagi.")
                         input("Tekan Enter untuk melanjutkan...")
                         continue
                     
                     jumlah = int(jumlah)
                     
-                    if jumlah <= 0:  # Jika jumlah ≤ 0, ulangi
+                    if jumlah <= 0:  
                         print("Jumlah barang harus lebih dari 0. Silakan coba lagi.")
                         input("Tekan Enter untuk melanjutkan...")
                         continue
 
-                    if jumlah > stok_tersedia:  # Jika jumlah melebihi stok, ulangi
+                    if jumlah > stok_tersedia:  
                         print(f"Jumlah melebihi stok yang tersedia ({stok_tersedia}). Silakan coba lagi.")
                         input("Tekan Enter untuk melanjutkan...")
                         continue
-                    break  # Keluar dari loop jika jumlah valid
+                    break  
                 except ValueError:
                     print("Input jumlah tidak valid. Masukkan angka.")
                     input("Tekan Enter untuk melanjutkan...")
 
-            # Tambahkan barang ke keranjang jika jumlah valid
             barang_ditemukan = False
             for item in keranjang:
                 if item['id'] == barang['id']:
-                    item['jumlah'] += jumlah  # Menambah jumlah barang yang sudah ada
+                    item['jumlah'] += jumlah  
                     barang_ditemukan = True
                     break
 
@@ -713,7 +711,7 @@ def muat_keranjang(username):
         with open("keranjang.csv", mode='r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                if row['username'] == username:  # Memuat keranjang milik pengguna tertentu
+                if row['username'] == username:  
                     keranjang.append({
                         'id': row['id'],
                         'nama': row['nama'],
@@ -729,11 +727,7 @@ def simpan_keranjang(username, keranjang):
         with open("keranjang.csv", mode='r') as file:
             reader = csv.DictReader(file)
             data_keranjang = list(reader)
-
-    # Hapus data keranjang pengguna lama
     data_keranjang = [row for row in data_keranjang if row['username'] != username]
-
-    # Tambahkan data keranjang pengguna baru
     for item in keranjang:
         data_keranjang.append({
             'username': username,
@@ -850,7 +844,6 @@ def checkout(keranjang, total, username):
 
     # Proses pembaruan stok barang dan transaksi
     def proses_checkout(file_barang, file_transaksi, keranjang, username, total):
-        # Membaca file barang
         barang = pd.read_csv(file_barang)
 
         daftar_barang = []
@@ -861,10 +854,9 @@ def checkout(keranjang, total, username):
             nama_barang = item['nama']
             harga_barang = int(item['harga'])
 
-            # Gabungkan data barang untuk laporan transaksi
             daftar_barang.append(f"{nama_barang} (x{jumlah_beli})")
 
-            # Perbarui stok barang
+
             a = barang['id'] == id_barang
             if not a.any():
                 continue
@@ -876,10 +868,8 @@ def checkout(keranjang, total, username):
             else:
                 barang = barang[~a]
 
-        # Simpan data barang yang diperbarui ke file
         barang.to_csv(file_barang, index=False)
 
-        # Simpan transaksi ke file transaksi
         transaksi_id = 1
         if os.path.exists(file_transaksi):
             transaksi_df = pd.read_csv(file_transaksi)

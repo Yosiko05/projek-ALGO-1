@@ -307,10 +307,10 @@ def tambah_barang():
             reader = csv.DictReader(file)
             id = 0
             for row in reader:
-                id = int(row['id'])  # Ambil id terakhir
-            id_barang = id + 1  # id berikutnya
+                id = int(row['id'])  
+            id_barang = id + 1  
     else:
-        id_barang = 1  # Jika file belum ada, mulai dari 1
+        id_barang = 1  
 
     with open(file_barang, mode='a', newline='') as file:
         tambah_b = csv.writer(file)

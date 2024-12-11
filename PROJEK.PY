@@ -68,8 +68,7 @@ def daftar():
                     return
                 else:
                     print('input tidak valid')
-                    continue
-            clear_terminal()    
+                    continue   
             break
             
             
@@ -212,6 +211,7 @@ def login_pengguna():
 
             input('Password salah! Silakan coba lagi.')
             login_pengguna()
+        break
 
 file_barang = "barang.csv"
 file_voucher = "voucher.csv"
@@ -279,7 +279,7 @@ def tambah_barang():
     # Validasi nama barang tidak boleh kosong
     while True:
         nama = input('Nama barang: ').strip()
-        if nama:  # Jika nama tidak kosong
+        if nama:  
             break
         else:
             print("Nama barang tidak boleh kosong. Harap masukkan nama barang.")
@@ -783,6 +783,7 @@ def cek_keranjang(keranjang, username):
         print('Pilihan tidak valid, coba lagi.\n')
 
 from datetime import datetime
+
 def checkout(keranjang, total, username):
     if os.name == 'nt':  
         os.system('cls')
@@ -847,79 +848,84 @@ def checkout(keranjang, total, username):
         except ValueError:
             print("\nMasukkan angka yang valid.\n")
 
-    # Proses pembaruan stok barang
-    barang_update = []
-    daftar_barang = []
-    with open(file_barang, mode='r') as file:
-        reader = csv.DictReader(file)
-        barang_tersedia = list(reader)
+    # Proses pembaruan stok barang dan transaksi
+    def proses_checkout(file_barang, file_transaksi, keranjang, username, total):
+        # Membaca file barang
+        barang = pd.read_csv(file_barang)
 
-    for item in keranjang:
-        id_barang = item['id']
-        jumlah_beli = int(item['jumlah'])
-        nama_barang = item['nama']
-        harga_barang = int(item['harga'])
+        daftar_barang = []
 
-        # Gabungkan data barang untuk laporan transaksi
-        daftar_barang.append(f"{nama_barang} (x{jumlah_beli})")
+        for item in keranjang:
+            id_barang = item['id']
+            jumlah_beli = int(item['jumlah'])
+            nama_barang = item['nama']
+            harga_barang = int(item['harga'])
 
-        # Perbarui stok barang
-        for row in barang_tersedia:
-            if row['id'] == id_barang:
-                stok_terbaru = int(row['stok']) - jumlah_beli
-                if stok_terbaru > 0:
-                    row['stok'] = str(stok_terbaru)
-                    barang_update.append(row)
-                # Jika stok habis atau negatif, barang tidak ditambahkan kembali
-                break
+            # Gabungkan data barang untuk laporan transaksi
+            daftar_barang.append(f"{nama_barang} (x{jumlah_beli})")
+
+            # Perbarui stok barang
+            a = barang['id'] == id_barang
+            if not a.any():
+                continue
+
+            stok_terbaru = barang.loc[a, 'stok'].iloc[0] - jumlah_beli
+
+            if stok_terbaru > 0:
+                barang.loc[a, 'stok'] = stok_terbaru
             else:
-                barang_update.append(row)
+                barang = barang[~a]
 
-    # Simpan data barang dengan stok > 0 ke file
-    with open(file_barang, mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=['id', 'nama', 'harga', 'stok'])
-        writer.writeheader()
-        writer.writerows(barang_update)
+        # Simpan data barang yang diperbarui ke file
+        barang.to_csv(file_barang, index=False)
 
-    # Simpan transaksi ke file transaksi
-    transaksi_data = []
-    if os.path.exists(file_transaksi):
-        with open(file_transaksi, mode='r') as file:
-            reader = csv.DictReader(file)
-            transaksi_data = [row for row in reader]
+        # Simpan transaksi ke file transaksi
+        transaksi_id = 1
+        if os.path.exists(file_transaksi):
+            transaksi_df = pd.read_csv(file_transaksi)
+            if not transaksi_df.empty:
+                transaksi_id = transaksi_df['transaksi_id'].max() + 1
+        else:
+            transaksi_df = pd.DataFrame(columns=['transaksi_id', 'username', 'tanggal', 'barang', 'total_pembayaran'])
 
-    transaksi_id = len(transaksi_data) + 1
-    tanggal_transaksi = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    transaksi_data.append({
-        'transaksi_id': transaksi_id,
-        'username': username,
-        'tanggal': tanggal_transaksi,
-        'barang': ', '.join(daftar_barang),
-        'total_pembayaran': total
-    })
+        tanggal_transaksi = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        transaksi_df = pd.concat([
+            transaksi_df,
+            pd.DataFrame([{
+                'transaksi_id': transaksi_id,
+                'username': username,
+                'tanggal': tanggal_transaksi,
+                'barang': ', '.join(daftar_barang),
+                'total_pembayaran': total
+            }])
+        ], ignore_index=True)
 
-    with open(file_transaksi, mode='w', newline='') as file:
-        fieldnames = ['transaksi_id', 'username', 'tanggal', 'barang', 'total_pembayaran']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(transaksi_data)
+        transaksi_df.to_csv(file_transaksi, index=False)
 
-    # Bersihkan keranjang pengguna
-    data_keranjang = []
-    if os.path.exists("keranjang.csv"):
-        with open("keranjang.csv", mode='r') as file:
-            reader = csv.DictReader(file)
-            data_keranjang = [row for row in reader if row['username'] != username]
+        # Bersihkan keranjang pengguna
+        keranjang_file = "keranjang.csv"
+        if os.path.exists(keranjang_file):
+            keranjang_df = pd.read_csv(keranjang_file)
+            keranjang_df = keranjang_df[keranjang_df['username'] != username]
+            keranjang_df.to_csv(keranjang_file, index=False)
 
-    with open("keranjang.csv", mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=['username', 'id', 'nama', 'harga', 'jumlah'])
-        writer.writeheader()
-        writer.writerows(data_keranjang)
+        keranjang.clear()
+        print("\nCheckout berhasil. Terima kasih sudah berbelanja!")
+        input('Klik enter untuk kembali')
+        clear_terminal()
 
-    keranjang.clear()
-    print("\nCheckout berhasil. Terima kasih sudah berbelanja!")
-    input('Klik enter untuk kembali')
-    clear_terminal()
+    # Jalankan proses checkout
+    file_barang = 'barang.csv'
+    file_transaksi = 'transaksi.csv'
+
+    if not os.path.exists(file_barang):
+        pd.DataFrame(columns=['id', 'nama', 'harga', 'stok']).to_csv(file_barang, index=False)
+
+    if not os.path.exists(file_transaksi):
+        pd.DataFrame(columns=['transaksi_id', 'username', 'tanggal', 'barang', 'total_pembayaran']).to_csv(file_transaksi, index=False)
+
+    proses_checkout(file_barang, file_transaksi, keranjang, username, total)
+
 
 
 def keluar():

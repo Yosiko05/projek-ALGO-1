@@ -269,7 +269,6 @@ def manajemen_barang():
             print("Pilihan tidak valid, coba lagi.\n")
         break
 
-
 # Fungsi Tambah Barang
 def tambah_barang():
     clear_terminal()
@@ -419,7 +418,6 @@ def manajemen_voucher():
             print('Pilihan tidak valid, coba lagi.\n')
         break
 
-
 # Fungsi untuk menambah voucher
 def tambah_voucher():
     if os.name == 'nt':  
@@ -427,7 +425,6 @@ def tambah_voucher():
     print('===================================')
     print('TAMBAH VOUCHER'.center(35))
     print('===================================\n')
-
 
     kode = input('Masukkan kode voucher: ').strip()
     if not kode:
@@ -438,7 +435,7 @@ def tambah_voucher():
     while True:
         try:
             diskon = int(input('Masukkan diskon (%): '))
-            if diskon < 0 or diskon > 100:
+            if diskon <= 0 or diskon > 100:
                 print('Diskon harus antara 0% hingga 100%.')
                 continue
             break
@@ -508,7 +505,7 @@ def hapus_voucher():
         reader = csv.DictReader(file)
         rows = list(reader)
         if not rows:
-            print('Tidak ada voucher yang tersedia.\n')
+            input('Tidak ada voucher yang tersedia.\n')
             return manajemen_voucher()
         
         print(f"{'Kode':<15} {'Diskon (%)':<15} {'Batas Pemakaian':<20}")
@@ -627,7 +624,7 @@ def belanja(keranjang, username):
         return
 
     # Pilih barang untuk dimasukkan ke keranjang
-    id_barang = input('\nMasukkan ID barang yang ingin dibeli (ketik enter untuk kembali): ')
+    id_barang = input('\nMasukkan ID barang yang ingin dibeli (tekan enter untuk kembali): ')
     if not id_barang:
         return clear_terminal()
 
@@ -667,7 +664,6 @@ def belanja(keranjang, username):
                         print(f"Jumlah melebihi stok yang tersedia ({stok_tersedia}). Silakan coba lagi.")
                         input("Tekan Enter untuk melanjutkan...")
                         continue
-
                     break  # Keluar dari loop jika jumlah valid
                 except ValueError:
                     print("Input jumlah tidak valid. Masukkan angka.")
